@@ -5,8 +5,200 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SkyPulse</title>
     <link rel="stylesheet" href="./output.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
 </head>
-<body class="bg-slate-500">
-    <h1 class="bg-black">Hello</h1>
+<body class="font-outfit">
+    
+    <!------------ Animated Background ---------->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden" id="cloudsWrap">
+        <div class="bg-gradient " id="bgGradient"></div>
+        <div class="sky-glow" id="skyGlow"></div>
+        <div class="sun-orb" id="sunOrb"></div>
+        <div class ="cloudy-wrap absolute inset-0 overflow-hidden" id="cloudsWrap">
+            <div class="cloud cloud-1"></div>
+            <div class="cloud cloud-2"></div>
+            <div class="cloud cloud-3"></div>
+        </div>
+        <div class="rain-wrap" id="rainWrap"></div>
+        <div class="snow-wrap" id="snowWrap"></div>
+        <div class="stars-wrap" id="starsWrap"></div>
+        <div class="lightning-wrap" id="lightningWrap"></div>
+    </div>
+
+    <!---------------- Toast -------------->
+    <div id="toast" class="toast" aria-live="polite"></div>
+
+  <!------------------ Alert Banner ------------------->
+    <div id="alertBanner" class="alert-banner hidden" role="alert">
+      <span id="alertIcon">⚠️</span>
+      <span id="alertText"></span>
+      <button onclick="document.getElementById('alertBanner').classList.add('hidden')" class="alert-close">✕</button>
+    </div>
+
+    <div class="relative z-10 max-w-app mx-auto px-6 pb-16 min-h-screen">
+        <header class="app-header flex items-center gap-4 pt-5 pb-7 flex-wrap">
+
+      <!------------- Header  ------------->
+      <div class="header-brand flex items-center gap-2 flex-shrink-0">
+        <span class="text-2xl">🌐</span>
+        <span class="brand-name">SkyPulse</span>
+      </div>
+      <div class="header-search search-section flex items-center gap-2 flex-1 min-w-0 relative">
+        <div class="search-wrapper relative flex-1 min-w-0" id="searchWrapper">
+          <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm pointer-events-none z-10">🔍</span>
+          <input
+            type="text"
+            id="searchInput"
+            class="search-input"
+            placeholder="Search city…"
+            autocomplete="off"
+            aria-label="Search for a city"
+            aria-autocomplete="list"
+            aria-controls="recentDropdown"
+          />
+          <button id="clearSearch"
+                  class="clear-btn hidden absolute right-2.5 top-1/2 -translate-y-1/2
+                         bg-white/15 border-none rounded-full w-5 h-5 text-white
+                         cursor-pointer text-xs flex items-center justify-center z-10
+                         hover:bg-white/30 transition-colors"
+                  aria-label="Clear search">✕</button>
+
+          <div id="recentDropdown" class="recent-dropdown hidden" role="listbox" aria-label="Recent searches">
+            <div class="flex justify-between items-center px-4 pt-3 pb-2">
+              <span class="text-[11px] font-semibold tracking-widest uppercase text-white/40">Recent Searches</span>
+              <button id="clearRecent"
+                      class="text-[11px] text-blue-400/80 hover:text-blue-300 bg-transparent border-none cursor-pointer font-outfit transition-colors">
+                Clear all
+              </button>
+            </div>
+            <ul id="recentList" class="list-none"></ul>
+          </div>
+        </div>
+
+        <button id="searchBtn" class="btn-search" aria-label="Search">Search</button>
+
+        <button id="locationBtn" class="btn-location" aria-label="Use current location" title="Use my location">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
+          </svg>
+        </button>
+      </div>
+      <!----------------- Unit Toggle  ----------->
+      <div class="header-unit flex flex-shrink-0 bg-white/10 border border-white/15 rounded-[10px] p-[3px]"
+           role="group" aria-label="Temperature unit">
+        <button id="btnC" class="unit-btn active" onclick="setUnit('C')">°C</button>
+        <button id="btnF" class="unit-btn"        onclick="setUnit('F')">°F</button>
+      </div>
+    </header>
+
+
+    <!--------------  Loading State ---------->
+    <div id="loadingState" class="hidden flex-col items-center justify-center gap-3 py-20 text-center">
+        <div class="loader"></div>
+        <p>Fetching weather data</p>
+    </div>
+
+    <!---------------- Error State  ---------------->
+    <div id="errorState" class="hidden flex flex-col items-center justify-center gap-3 py-20 text-center">
+      <div class="text-[52px]">⚡</div>
+      <h3 id="errorTitle" class="text-[22px] font-semibold text-white">Something went wrong</h3>
+      <p  id="errorMsg"   class="text-sm text-white/65 max-w-xs">Please try again.</p>
+      <button onclick="hideError()" class="btn-retry">Try Again</button>
+    </div>
+
+    <!-------------------- Welocome State  ------------------>
+    <div id="welcomeState" class="flex flex-col items-center justify-center gap-3.5 py-20 text-center animate-fadeUp">
+      <div class="welcome-icon text-[72px] mb-2">🌍</div>
+      <h2 class="welcome-title text-[42px] font-normal tracking-tight">Know your sky.</h2>
+      <p class="text-base text-white/65 max-w-sm leading-relaxed">
+        Search any city or use your location to get real-time weather forecasts.
+      </p>
+      <div class="flex flex-wrap gap-2.5 justify-center mt-2">
+        <span class="hint-chip">🏙️ Mumbai</span>
+        <span class="hint-chip">🗼 Tokyo</span>
+        <span class="hint-chip">🗽 New York</span>
+        <span class="hint-chip">🌁 London</span>
+      </div>
+    </div>
+
+    <!------------------ Weather container ----------------------->
+    <div id="weatherContent" class="hidden animate-fadeUpFast">
+
+      <section class="flex justify-between items-start gap-6 pt-5 pb-10 flex-wrap">
+
+        <!----------------- Left section --------->
+        <div class="flex-1 min-w-[200px]">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="text-4xl" id="heroFlag"></span>
+            <div>
+              <h1 id="heroCity"    class="text-[40px] font-light tracking-tight leading-none">—</h1>
+              <p  id="heroCountry" class="text-sm text-white/65 mt-0.5">—</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-5 flex-wrap">
+            <div id="heroTemp" class="text-[100px] font-thin leading-none tracking-[-5px] transition-all duration-300">—°</div>
+            <div class="pt-3">
+              <p id="heroCond"   class="text-[22px] font-normal mb-1.5">—</p>
+              <p id="heroHiLo"   class="text-base text-white/65 font-light mb-1">H:—° · L:—°</p>
+              <p id="heroFeels"  class="text-sm text-white/40">Feels like —°</p>
+            </div>
+          </div>
+          <p id="heroUpdated" class="text-xs text-white/40 mt-3">—</p>
+        </div>
+
+        <!-------------- Right section------------->
+        <div class="flex flex-col items-center gap-5">
+          <div id="heroCondIcon" class="text-[88px] leading-none">—</div>
+          <div class="flex gap-5">
+            <div class="mini-stat glass-tile flex flex-col items-center gap-1 text-sm font-medium px-4 py-3 rounded-2xl">
+              <span class="text-lg">💧</span>
+              <span id="miniHumidity">—%</span>
+            </div>
+            <div class="mini-stat glass-tile flex flex-col items-center gap-1 text-sm font-medium px-4 py-3 rounded-2xl">
+              <span class="text-lg">💨</span>
+              <span id="miniWind">— km/h</span>
+            </div>
+            <div class="mini-stat glass-tile flex flex-col items-center gap-1 text-sm font-medium px-4 py-3 rounded-2xl">
+              <span class="text-lg">👁️</span>
+              <span id="miniVisibility">— km</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!------------ Hourly forecast ------------>
+      <section class="mb-5">
+        <div class="mb-2.5">
+          <span class="text-[11px] font-semibold tracking-[0.9px] uppercase text-white/40">🕐 Hourly Forecast</span>
+        </div>
+        <div class="glass-card">
+          <div class="hourly-scroll" id="hourlyRow"></div>
+        </div>
+      </section>
+
+      <!------------------ 5Days forecast -------------------->
+      <section class="mb-5">
+        <div class="mb-2.5">
+          <span class="text-[11px] font-semibold tracking-[0.9px] uppercase text-white/40">
+            📅 <span id="forecastLabel">5-Day Forecast</span>
+          </span>
+        </div>
+        <div class="forecast-grid" id="forecastGrid"></div>
+      </section>
+
+      <!---------------- Weather Details -------------------->
+      <section class="mb-5">
+        <div class="mb-2.5">
+          <span class="text-[11px] font-semibold tracking-[0.9px] uppercase text-white/40">🌡️ Weather Details</span>
+        </div>
+        <div class="details-grid" id="detailsGrid"></div>
+      </section>
+
+     </div>
+    </div>
+
+
 </body>
 </html>

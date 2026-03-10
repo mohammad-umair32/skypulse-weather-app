@@ -1,3 +1,43 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/*********** Header brand  *********/
+.brand-name {
+    @apply text-2xl font-normal tracking-tight;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.75) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+
+  /************* Search input  ***********/
+  .search-input {
+    @apply w-full min-w-0 text-white text-sm outline-none font-outfit;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 11px 40px 11px 40px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+  .search-input::placeholder { color: rgba(255,255,255,0.55); }
+  .search-input:focus {
+    background: rgba(255,255,255,0.18);
+    border-color: rgba(255,255,255,0.35);
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.08);
+  }
+  .search-input.input-error {
+    border-color: rgba(255,80,80,0.6);
+    background: rgba(255,60,60,0.12);
+    animation: shake 0.35s ease forwards;
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20%     { transform: translateX(-6px); }
+    40%     { transform: translateX(6px); }
+    60%     { transform: translateX(-4px); }
+    80%     { transform: translateX(4px); }
+  }

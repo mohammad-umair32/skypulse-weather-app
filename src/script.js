@@ -220,7 +220,7 @@ function renderWeather(data) {
 
   renderTemps(c, f)
   renderHourly(f, isDay);
-
+  renderForecast(f);
 }
 
 //------------------ Todays Temperature ---------------
@@ -270,18 +270,79 @@ function renderHourly(f, isDay) {
   }).join('');
 }
 
+//---------------- 5-Days Forecast ------------------
+function renderForecast(f) {
+
+  const byDay = {};
+  f.list.forEach(s => {
+    const key = new Date(s.dt * 1000).toLocaleDateString('en-CA'); 
+    if (!byDay[key]) byDay[key] = [];
+    byDay[key].push(s);
+  });
+
+  const days = Object.entries(byDay).slice(0, 5); 
+
+  const labelEl = document.getElementById('forecastLabel');
+  if (labelEl) labelEl.textContent = `${days.length}-Day Forecast`;
+
+  const allHiC = days.map(([, slots]) => Math.max(...slots.map(s => s.main.temp_max)));
+  const allLoC = days.map(([, slots]) => Math.min(...slots.map(s => s.main.temp_min)));
+  const absHi  = Math.max(...allHiC);
+  const absLo  = Math.min(...allLoC);
+  const range  = absHi - absLo || 1;
+
+  const todayKey = new Date().toLocaleDateString('en-CA');
+
+  document.getElementById('forecastGrid').innerHTML = days.map(([dateKey, slots], i) => {
+    const hiC  = Math.max(...slots.map(s => s.main.temp_max));
+    const loC  = Math.min(...slots.map(s => s.main.temp_min));
+    const hi   = unit === 'C' ? Math.round(hiC)  : toF(hiC);
+    const lo   = unit === 'C' ? Math.round(loC)  : toF(loC);
+    const rep  = slots.find(s => new Date(s.dt * 1000).getHours() === 12) || slots[0];
+    const avgHumidity = Math.round(slots.reduce((a, s) => a + s.main.humidity, 0) / slots.length);
+    const maxWind     = Math.round(Math.max(...slots.map(s => s.wind.speed)) * 3.6);
+    const maxRain     = Math.round(Math.max(...slots.map(s => s.pop)) * 100);
+    const loOff = ((loC - absLo) / range * 100).toFixed(1);
+    const hiOff = ((hiC - absLo) / range * 100).toFixed(1);
+    const isToday  = dateKey === todayKey;
+    const dayLabel = isToday ? 'Today' : formatDay(dateKey);
+
+    return `
+      <div class="glass-tile${isToday ? ' today-card' : ''} px-3.5 py-4 text-center">
+        <div class="text-[13px] font-semibold text-white/65 mb-2.5">${dayLabel}</div>
+        <div class="text-3xl mb-2.5">${owmEmoji(rep.weather[0].id, 1)}</div>
+        <div class="text-[22px] font-light mb-0.5">${hi}°</div>
+        <div class="text-sm text-white/40 mb-3">${lo}°</div>
+        <div class="h-px bg-white/10 my-2.5"></div>
+        <div class="flex items-center justify-center gap-1 text-xs text-white/65 mb-1.5">
+          <span>💧</span><span>${maxRain}%</span>
+        </div>
+        <div class="flex items-center justify-center gap-1 text-xs text-white/65 mb-1.5">
+          <span>💨</span><span>${maxWind} km/h</span>
+        </div>
+        <div class="flex items-center justify-center gap-1 text-xs text-white/65 mb-1.5">
+          <span>🌡️</span><span>${avgHumidity}%</span>
+        </div>
+        <div class="fc-bar">
+          <div class="fc-bar-fill" style="left:${loOff}%;width:${Math.max(hiOff - loOff, 4)}%;"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
 // Own Emoji map
 function owmEmoji(id, isDay) {
   if (id >= 200 && id <= 299) return '⛈️';
   if (id >= 300 && id <= 399) return '🌦️';
   if (id >= 500 && id <= 504) return isDay ? '🌧️' : '🌧️';
-  if (id === 511)              return '🌨️';
+  if (id === 511) return '🌨️';
   if (id >= 520 && id <= 531) return '🌧️';
   if (id >= 600 && id <= 622) return '❄️';
   if (id >= 700 && id <= 799) return '🌫️';
-  if (id === 800)              return isDay ? '☀️' : '🌙';
-  if (id === 801)              return isDay ? '🌤️' : '🌤️';
-  if (id === 802)              return '⛅';
+  if (id === 800) return isDay ? '☀️' : '🌙';
+  if (id === 801) return isDay ? '🌤️' : '🌤️';
+  if (id === 802) return '⛅';
   if (id >= 803 && id <= 804) return '☁️';
   return isDay ? '🌤️' : '🌙';
 }
@@ -418,6 +479,7 @@ function showToast(msg, type = 'info') {
 }
 
 // Helpers 
+const toF = c => Math.round(c * 9/5 +32);
 const capitalize = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
 
 function formatHour(date) {
@@ -425,6 +487,9 @@ function formatHour(date) {
 }
 function formatTime(unixTs) {
   return new Date(unixTs * 1000).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+}
+function formatDay(dateStr) {
+  return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' });
 }
 function countryFlag(code) {
   if (!code || code.length !== 2) return '🌍';

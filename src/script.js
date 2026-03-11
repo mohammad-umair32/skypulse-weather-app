@@ -213,6 +213,61 @@ function renderWeather(data) {
   document.getElementById('heroCondIcon').textContent = owmEmoji(c.weather[0].id, isDay);
   document.getElementById('heroUpdated').textContent  = `Updated ${formatTime(c.dt)}`;
 
+  // Mini Stats
+  document.getElementById('miniHumidity').textContent  = `${c.main.humidity}%`;
+  document.getElementById('miniWind').textContent       = `${Math.round(c.wind.speed * 3.6)} km/h`;
+  document.getElementById('miniVisibility').textContent = `${(c.visibility / 1000).toFixed(1)} km`;
+
+  renderTemps(c, f)
+  renderHourly(f, isDay);
+
+}
+
+//------------------ Todays Temperature ---------------
+function renderTemps(c, f) {
+  const tempC = c.main.temp;
+  const feelsC = c.main.feels_like;
+
+  const todaySlots = f.list.filter(s => {
+    const d = new Date(s.dt * 1000);
+    const now = new Date();
+    return d.getDate() === now.getDate();
+  });
+  const hiC = todaySlots.length ? Math.max(...todaySlots.map(s => s.main.temp_max)) : c.main.temp_max;
+  const loC = todaySlots.length ? Math.min(...todaySlots.map(s => s.main.temp_min)) : c.main.temp_min;
+
+  const t  = unit === 'C' ? `${Math.round(tempC)}°`  : `${toF(tempC)}°`;
+  const fl = unit === 'C' ? `${Math.round(feelsC)}°` : `${toF(feelsC)}°`;
+  const hi = unit === 'C' ? Math.round(hiC) : toF(hiC);
+  const lo = unit === 'C' ? Math.round(loC) : toF(loC);
+
+  document.getElementById('heroTemp').textContent  = t;
+  document.getElementById('heroHiLo').textContent  = `H:${hi}° · L:${lo}°`;
+  document.getElementById('heroFeels').textContent = `Feels like ${fl}`;
+}
+
+// -------- Hourly ---------
+function renderHourly(f, isDay) {
+  const slots = f.list.slice(0, 8); 
+  const container = document.getElementById('hourlyRow');
+
+  container.style.gridTemplateColumns = `repeat(${slots.length}, 1fr)`;
+
+  container.innerHTML = slots.map((s, i) => {
+    const date  = new Date(s.dt * 1000);
+    const label = i === 0 ? 'Now' : formatHour(date);
+    const temp  = unit === 'C' ? `${Math.round(s.main.temp)}°` : `${toF(s.main.temp)}°`;
+    const slotDay = s.sys?.pod === 'd' || (date.getHours() >= 6 && date.getHours() < 20);
+    const rain  = s.pop > 0 ? `<div class="text-[11px] text-blue-200/80">💧${Math.round(s.pop * 100)}%</div>` : '';
+    return `
+      <div class="hour-item">
+        <div class="text-xs text-white/65 font-medium whitespace-nowrap">${label}</div>
+        <div class="text-[22px]">${owmEmoji(s.weather[0].id, slotDay)}</div>
+        <div class="text-base font-medium">${temp}</div>
+        ${rain}
+      </div>
+    `;
+  }).join('');
 }
 
 // Own Emoji map
@@ -365,6 +420,9 @@ function showToast(msg, type = 'info') {
 // Helpers 
 const capitalize = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
 
+function formatHour(date) {
+  return date.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
+}
 function formatTime(unixTs) {
   return new Date(unixTs * 1000).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 }

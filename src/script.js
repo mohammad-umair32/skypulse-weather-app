@@ -48,14 +48,14 @@ function attachEventListeners() {
 
     searchInput.addEventListener('keydown', e => {
         if (e.key === 'Enter') handleSearch();
-        if (e.key === 'Escape') closeDropDown();
+        if (e.key === 'Escape') closeDropdown();
     });
 
     searchInput.addEventListener('input', () => {
         const val = searchInput.value.trim();
         clearSearchBtn.classList.toggle('hidden', val.length === 0);
         if(val.length === 0 && recentCities.length > 0) openDropdown();
-        else closeDropDown()
+        else closeDropdown()
     })
 
     searchInput.addEventListener('focus', () => {
@@ -67,21 +67,21 @@ function attachEventListeners() {
         clearSearchBtn.classList.add('hidden');
         searchInput.focus();
         if (recentCities.length > 0) openDropdown();
-        else closeDropDown()
+        else closeDropdown()
     });
 
-    // locationBtn.addEventListener('click', handleSearch);
+    locationBtn.addEventListener('click', handleLocation);
 
     clearRecentBtn.addEventListener('click',e => {
         e.stopPropagation();
         recentCities = [];
         saveRecent()
-        closeDropDown();
+        closeDropdown();
         showToast('Search history cleared')
     });
 
     document.addEventListener('click', e => {
-        if (!e.target.closest('#searchWrapper')) closeDropDown();
+        if (!e.target.closest('#searchWrapper')) closeDropdown();
     })
 
     recentList.addEventListener('click', e => {
@@ -116,8 +116,36 @@ function handleSearch() {
         showInputError('Please enter a valid city name (letters only).')
         return;
     }
-    closeDropDown();
+    closeDropdown();
     fetchWeather(query) 
+}
+
+// --------------------------- Geolocation ----------------------------------
+function handleLocation() {
+  if (!navigator.geolocation) {
+    showError('Not Supported', 'Your browser does not support geolocation.');
+    return;
+  }
+  locationBtn.disabled = true;
+  showState('loading');
+
+  navigator.geolocation.getCurrentPosition(
+    async pos => {
+      locationBtn.disabled = false;
+      const { latitude: lat, longitude: lon } = pos.coords;
+      await fetchWeatherByCoords(lat, lon);
+    },
+    err => {
+      locationBtn.disabled = false;
+      const msgs = {
+        1: 'Location access denied. Please allow permission in your browser settings.',
+        2: 'Location unavailable. Please try again.',
+        3: 'Location request timed out. Please try again.',
+      };
+      showError('Location Error', msgs[err.code] || 'Unable to retrieve your location.');
+    },
+    { timeout: 10000, maximumAge: 60000 }
+  );
 }
 
 async function fetchWeather(cityName) {
@@ -223,6 +251,7 @@ function renderWeather(data) {
   renderForecast(f);
   renderDetails(c, isDay);
   setBackground(c.weather[0].id, isDay);
+  checkAlert(c.main.temp, geo.name);
 }
 
 //------------------ Todays Temperature ---------------
@@ -576,7 +605,7 @@ function removeRecent(name) {
   saveRecent();
 
   if (recentCities.length === 0) {
-    closeDropDown();
+    closeDropdown();
     return;
   }
 
@@ -607,7 +636,7 @@ function buildRecentHTML() {
 
 // --------------- Dropdown ------------
 function selectRecent(name) {
-  closeDropDown();
+  closeDropdown();
   searchInput.value = name;
   fetchWeather(name);
 }
@@ -618,7 +647,7 @@ function openDropdown() {
     recentDropdown.classList.remove('hidden');
 }
 
-function closeDropDown() { recentDropdown.classList.add('hidden'); }
+function closeDropdown() { recentDropdown.classList.add('hidden'); }
 
 
 // ---------------- UI State ---------------

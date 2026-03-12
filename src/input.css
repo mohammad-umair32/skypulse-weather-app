@@ -299,7 +299,6 @@
     background: rgba(255,255,255,0.2);
     @apply text-white;
   }
-}
 
 /******************** Glass Card  *******************/
 .glass-card {
@@ -486,3 +485,4 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+}

@@ -12,11 +12,11 @@
 <body class="font-outfit">
     
     <!------------ Animated Background ---------->
-    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden" id="cloudsWrap">
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
         <div class="bg-gradient " id="bgGradient"></div>
         <div class="sky-glow" id="skyGlow"></div>
         <div class="sun-orb" id="sunOrb"></div>
-        <div class ="cloudy-wrap absolute inset-0 overflow-hidden" id="cloudsWrap">
+        <div class ="clouds-wrap absolute inset-0 overflow-hidden" id="cloudsWrap">
             <div class="cloud cloud-1"></div>
             <div class="cloud cloud-2"></div>
             <div class="cloud cloud-3"></div>
@@ -95,8 +95,7 @@
 
 
     <!--------------  Loading State ---------->
-    <div id="loadingState" class="hidden flex-col items-center justify-center gap-3 py-20 text-center">
-        <div class="loader"></div>
+    <div id="loadingState" class="hidden flex flex-col items-center justify-center gap-4 py-20 text-white/65 text-sm">        <div class="loader"></div>
         <p>Fetching weather data</p>
     </div>
 
@@ -108,7 +107,7 @@
       <button onclick="hideError()" class="btn-retry">Try Again</button>
     </div>
 
-    <!-------------------- Welocome State  ------------------>
+    <!-------------------- Welcome State  ------------------>
     <div id="welcomeState" class="flex flex-col items-center justify-center gap-3.5 py-20 text-center animate-fadeUp">
       <div class="welcome-icon text-[72px] mb-2">🌍</div>
       <h2 class="welcome-title text-[42px] font-normal tracking-tight">Know your sky.</h2>

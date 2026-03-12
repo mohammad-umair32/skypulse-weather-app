@@ -327,3 +327,37 @@
     box-shadow: 0 8px 32px rgba(0,0,0,0.25);
   }
   .glass-tile.today-card { border-color: rgba(255,255,255,0.35); }
+
+  /************** Hourly Scroll  ************/
+   .hourly-scroll {
+    @apply grid overflow-x-auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.2) transparent;
+    padding: 18px 0;
+    gap: 0;
+    grid-template-columns: repeat(var(--hourly-cols, 8), 1fr);
+  }
+  .hourly-scroll::-webkit-scrollbar       { height: 4px; }
+  .hourly-scroll::-webkit-scrollbar-track  { background: transparent; }
+  .hourly-scroll::-webkit-scrollbar-thumb  { background: rgba(255,255,255,0.2); border-radius: 2px; }
+
+  .hour-item {
+    @apply flex flex-col items-center;
+    gap: 8px;
+    padding: 4px 6px;
+    min-width: 60px;
+    border-right: 1px solid rgba(255,255,255,0.07);
+  }
+  .hour-item:last-child { border-right: none; }
+
+/************* Forecast cards  ***********/
+ .forecast-grid {
+    @apply grid gap-3;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+
+/************** Details Grid  *************/
+.details-grid {
+    @apply grid gap-3;
+    grid-template-columns: repeat(4, 1fr);
+}

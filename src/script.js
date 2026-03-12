@@ -221,6 +221,7 @@ function renderWeather(data) {
   renderTemps(c, f)
   renderHourly(f, isDay);
   renderForecast(f);
+  renderDetails(c, isDay);
 }
 
 //------------------ Todays Temperature ---------------
@@ -329,6 +330,89 @@ function renderForecast(f) {
       </div>
     `;
   }).join('');
+}
+
+//--------------------- Details Cards ----------------------
+function renderDetails(c, isDay) {
+  const tempC  = c.main.temp;
+  const feelsC = c.main.feels_like;
+  const visKm  = (c.visibility / 1000).toFixed(1);
+  const windKph = Math.round(c.wind.speed * 3.6);
+  const gustKph = c.wind.gust ? Math.round(c.wind.gust * 3.6) : windKph;
+  const wDir   = windDirLabel(c.wind.deg);
+  const wDeg   = c.wind.deg || 0;
+  const fl     = unit === 'C' ? `${Math.round(feelsC)}°C` : `${toF(feelsC)}°F`;
+  const visDesc = visKm >= 10 ? 'Perfectly clear' : visKm >= 6 ? 'Good visibility' : 'Reduced visibility';
+  const pressDesc = c.main.pressure > 1013 ? '↑ High pressure' : '↓ Low pressure';
+  const feelsDesc = feelsC > tempC + 2 ? 'Feels hotter' : feelsC < tempC - 2 ? 'Feels cooler' : 'Similar to actual';
+
+  const sunrise = formatTime(c.sys.sunrise);
+  const sunset  = formatTime(c.sys.sunset);
+
+  const precip = (c.rain?.['1h'] ?? c.snow?.['1h'] ?? 0).toFixed(1);
+
+  const clouds = c.clouds.all;
+  const uvProxy = Math.round((1 - clouds / 100) * 8); // rough estimate
+  const uvLabel = uvProxy <= 2 ? 'Low' : uvProxy <= 5 ? 'Moderate' : uvProxy <= 7 ? 'High' : 'Very High';
+  const uvPct   = Math.min(uvProxy / 11 * 100, 100).toFixed(1);
+
+  document.getElementById('detailsGrid').innerHTML = `
+    <div class="glass-tile dc">
+      <div class="dc-label">💧 Humidity</div>
+      <div class="dc-val">${c.main.humidity}<span class="dc-unit">%</span></div>
+      <div class="dc-sub">Pressure: ${c.main.pressure} hPa</div>
+    </div>
+    <div class="glass-tile dc">
+      <div class="dc-label">🌡️ Feels Like</div>
+      <div class="dc-val">${fl}</div>
+      <div class="dc-sub">${feelsDesc}</div>
+    </div>
+    <div class="glass-tile dc">
+      <div class="dc-label">☁️ Cloud Cover</div>
+      <div class="dc-val">${clouds}<span class="dc-unit">%</span></div>
+      <div class="dc-sub">UV est: ${uvLabel}</div>
+      <div class="uv-bar"><div class="uv-needle" style="left:${uvPct}%"></div></div>
+    </div>
+    <div class="glass-tile dc">
+      <div class="dc-label">💨 Wind</div>
+      <div class="dc-val">${windKph}<span class="dc-unit"> km/h</span></div>
+      <div class="dc-sub">${wDir} · Gusts ${gustKph} km/h</div>
+      <div class="compass">
+        <span class="compass-n">N</span>
+        <div class="compass-needle" style="transform:translateX(-50%) rotate(${wDeg}deg);"></div>
+      </div>
+    </div>
+    <div class="glass-tile dc">
+      <div class="dc-label">👁️ Visibility</div>
+      <div class="dc-val">${visKm}<span class="dc-unit"> km</span></div>
+      <div class="dc-sub">${visDesc}</div>
+      <div class="vis-dots">
+        ${Array.from({length:10},(_,i)=>`<div class="vis-dot${i < Math.round(visKm / 2) ? ' on' : ''}"></div>`).join('')}
+      </div>
+    </div>
+    <div class="glass-tile dc">
+      <div class="dc-label">🌅 Sunrise · Sunset</div>
+      <div class="dc-val" style="font-size:17px;">${sunrise}</div>
+      <div class="sun-times-row"><span>Sunrise</span><span>${sunset}</span></div>
+      <svg class="sun-arc-svg" viewBox="0 0 200 54" fill="none">
+        <path d="M10 50 Q100 -4 190 50" stroke="rgba(255,210,80,0.4)" stroke-width="1.5"
+              stroke-dasharray="4 3" fill="none"/>
+        <circle cx="105" cy="18" r="6" fill="#ffd60a" opacity="0.9"/>
+        <circle cx="10"  cy="50" r="3" fill="rgba(255,160,40,0.6)"/>
+        <circle cx="190" cy="50" r="3" fill="rgba(255,160,40,0.6)"/>
+      </svg>
+    </div>
+    <div class="glass-tile dc">
+      <div class="dc-label">🌧️ Precipitation</div>
+      <div class="dc-val">${precip}<span class="dc-unit"> mm</span></div>
+      <div class="dc-sub">Last hour</div>
+    </div>
+    <div class="glass-tile dc">
+      <div class="dc-label">📊 Pressure</div>
+      <div class="dc-val">${c.main.pressure}<span class="dc-unit"> hPa</span></div>
+      <div class="dc-sub">${pressDesc}</div>
+    </div>
+  `
 }
 
 // Own Emoji map
@@ -490,6 +574,10 @@ function formatTime(unixTs) {
 }
 function formatDay(dateStr) {
   return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' });
+}
+function windDirLabel(deg) {
+  const dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+  return dirs[Math.round(deg / 22.5) % 16];
 }
 function countryFlag(code) {
   if (!code || code.length !== 2) return '🌍';

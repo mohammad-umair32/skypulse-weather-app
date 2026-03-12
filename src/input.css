@@ -361,3 +361,128 @@
     @apply grid gap-3;
     grid-template-columns: repeat(4, 1fr);
 }
+
+
+/*************** Detail Cards  ***********/
+.dc {
+    padding: 18px;
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+  .dc-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.38);
+    margin-bottom: 10px;
+  }
+  .dc-val {
+    font-size: 32px;
+    font-weight: 200;
+    letter-spacing: -0.5px;
+    line-height: 1;
+    color: white;
+  }
+  .dc-unit {
+    font-size: 16px;
+    font-weight: 300;
+  }
+  .dc-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.65);
+    margin-top: 6px;
+  }
+
+  /***************** UV bar  ****************/
+  .uv-bar {
+    @apply w-full relative mt-3;
+    height: 5px;
+    border-radius: 3px;
+    background: linear-gradient(to right, #4cd964, #ffcc00, #ff9500, #ff3b30, #8e44ad);
+  }
+  .uv-needle {
+    @apply absolute bg-white rounded-full;
+    top: -4px;
+    width: 13px; height: 13px;
+    transform: translateX(-50%);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.5);
+    transition: left 0.6s ease;
+  }
+
+  /*************** Wind compass  **************/
+  .compass {
+    @apply relative flex items-center justify-center mt-2.5 rounded-full;
+    width: 54px; height: 54px;
+    border: 1.5px solid rgba(255,255,255,0.22);
+  }
+  .compass-needle {
+    @apply absolute rounded-sm;
+    width: 2px; height: 20px;
+    top: 8px; left: 50%;
+    transform-origin: bottom center;
+    background: linear-gradient(to bottom, #ff3b30, rgba(255,59,48,0.2));
+    transition: transform 0.6s ease;
+  }
+  .compass-n {
+    @apply absolute font-bold;
+    top: 3px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 8px;
+    color: rgba(255,255,255,0.38);
+  }
+
+/*********** visiblity dots  *********/
+  .vis-dots  { @apply flex flex-wrap gap-1 mt-2.5; }
+  .vis-dot   { @apply rounded-full; width: 8px; height: 8px; background: rgba(255,255,255,0.15); }
+  .vis-dot.on { background: white; }
+
+
+  /************ Loader Spinner  ************/
+  .loader {
+    @apply rounded-full;
+    width: 44px; height: 44px;
+    border: 3px solid rgba(255,255,255,0.15);
+    border-top-color: rgba(255,255,255,0.8);
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+
+  /************ Hind Chips  **********/
+   .hint-chip {
+    @apply text-sm cursor-pointer px-4 py-1.5 rounded-full;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.20);
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+  .hint-chip:hover {
+    background: rgba(255,255,255,0.18);
+    transform: translateY(-2px);
+  }
+
+  /*************** Forecast bar  ************/
+  .fc-bar {
+    @apply relative overflow-hidden mt-2;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.1);
+  }
+  .fc-bar-fill {
+    @apply absolute top-0 h-full;
+    border-radius: 2px;
+    background: linear-gradient(to right, #ffd60a, #ff9f0a, #ff453a);
+    transition: width 0.6s ease;
+  }
+
+
+  /************ Sun Arc  ************/
+  .sun-arc-svg  { @apply w-full mt-2; height: 44px; overflow: visible; }
+  .sun-times-row { @apply flex justify-between text-xs mt-1; color: rgba(255,255,255,0.65); }
+
+  /************ Welcome Title  **************/
+  .welcome-title {
+    background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }

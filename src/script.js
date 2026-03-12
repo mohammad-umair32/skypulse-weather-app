@@ -29,7 +29,7 @@ const btnF = document.getElementById('btnF');
 //---------------------- Init -------------------
 function init() {
   loadRecent();
-  // generateParticles();
+  generateParticles();
   attachEventListeners();
   showState('welcome');
 
@@ -222,6 +222,7 @@ function renderWeather(data) {
   renderHourly(f, isDay);
   renderForecast(f);
   renderDetails(c, isDay);
+  setBackground(c.weather[0].id, isDay);
 }
 
 //------------------ Todays Temperature ---------------
@@ -415,6 +416,102 @@ function renderDetails(c, isDay) {
   `
 }
 
+// ----------------------- Background System ---------------------
+const BG_THEMES = {
+  sunny:  ['#87ceeb','#5ab3e8','#2e88cc','#0d5294'],
+  clear:  ['#5ab3e8','#3a8fc8','#1e6aaa','#0d3e7a'],
+  cloudy: ['#6a86aa','#4a6688','#2c4a6e','#162a44'],
+  rainy:  ['#2e4e72','#1e3454','#122038','#080e1c'],
+  snowy:  ['#8abedd','#6298ba','#3e7298','#1e4a6e'],
+  stormy: ['#1c2838','#111c28','#0a1018','#040810'],
+  foggy:  ['#607080','#485a6a','#323e4c','#1e2830'],
+  night:  ['#0a1426','#061020','#040c18','#020810'],
+};
+
+function setBackground(owmId, isDay) {
+  const bg        = document.getElementById('bgGradient');
+  const sun       = document.getElementById('sunOrb');
+  const clouds    = document.querySelectorAll('.cloud');
+  const rainWrap  = document.getElementById('rainWrap');
+  const snowWrap  = document.getElementById('snowWrap');
+  const starsWrap = document.getElementById('starsWrap');
+  const lightning = document.getElementById('lightningWrap');
+
+  sun.style.opacity       = '0';
+  rainWrap.style.opacity  = '0';
+  snowWrap.style.opacity  = '0';
+  starsWrap.style.opacity = '0';
+  clouds.forEach(c => { c.style.opacity = '0'; c.style.filter = 'blur(24px)'; });
+
+  lightning.style.animation = 'none';
+  lightning.style.opacity   = '0';
+
+  const grp = owmGroup(owmId);
+  let colors;
+
+  if (!isDay) {
+    colors = BG_THEMES.night;
+    starsWrap.style.opacity = '0.7';
+    if (grp === 'rainy' || grp === 'stormy') {
+      colors = ['#0e1826','#080e18','#040a10','#020608'];
+      clouds.forEach(c => c.style.opacity = '0.5');
+      rainWrap.style.opacity = '1';
+    }
+  } else {
+    switch (grp) {
+      case 'sunny':
+        colors = BG_THEMES.sunny;
+        sun.style.opacity = '1';
+        break;
+      case 'clear':
+        colors = BG_THEMES.clear;
+        sun.style.opacity = '0.45';
+        break;
+      case 'cloudy':
+        colors = BG_THEMES.cloudy;
+        clouds.forEach(c => c.style.opacity = '1');
+        break;
+      case 'foggy':
+        colors = BG_THEMES.foggy;
+        clouds.forEach(c => { c.style.opacity = '0.9'; c.style.filter = 'blur(44px)'; });
+        break;
+      case 'rainy':
+        colors = BG_THEMES.rainy;
+        clouds[0].style.opacity = clouds[1].style.opacity = '0.7';
+        rainWrap.style.opacity = '1';
+        break;
+      case 'snowy':
+        colors = BG_THEMES.snowy;
+        clouds[0].style.opacity = '0.5';
+        snowWrap.style.opacity = '1';
+        break;
+      case 'stormy':
+        colors = BG_THEMES.stormy;
+        clouds.forEach(c => c.style.opacity = '0.6');
+        rainWrap.style.opacity = '1';
+        // Only enable lightning for actual thunderstorms
+        lightning.style.animation = 'lightning 8s ease-in-out infinite';
+        break;
+      default:
+        colors = BG_THEMES.clear;
+        sun.style.opacity = '0.4';
+    }
+  }
+
+  bg.style.background = `linear-gradient(180deg, ${colors[0]} 0%, ${colors[1]} 30%, ${colors[2]} 65%, ${colors[3]} 100%)`;
+}
+
+function owmGroup(id) {
+  if (id === 800) return 'sunny';          // clear sky
+  if (id >= 801 && id <= 804) return 'cloudy';   // clouds
+  if (id >= 700 && id <= 799) return 'foggy';    // atmosphere (fog, haze, mist)
+  if (id >= 600 && id <= 699) return 'snowy';    // snow
+  if (id >= 500 && id <= 599) return 'rainy';    // rain
+  if (id >= 300 && id <= 399) return 'rainy';    // drizzle
+  if (id >= 200 && id <= 299) return 'stormy';   // thunderstorm
+  return 'clear';
+}
+
 // Own Emoji map
 function owmEmoji(id, isDay) {
   if (id >= 200 && id <= 299) return '⛈️';
@@ -479,7 +576,7 @@ function removeRecent(name) {
   saveRecent();
 
   if (recentCities.length === 0) {
-    closeDropdown();
+    closeDropDown();
     return;
   }
 
@@ -560,6 +657,33 @@ function showToast(msg, type = 'info') {
     toast.className = `toast ${type} show`;
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => toast.classList.remove('show'), 3000)
+}
+
+//----------------- Particals (rain, snow, starts ) ----------------
+function generateParticles() {
+  const rainWrap = document.getElementById('rainWrap');
+  for (let i = 0; i < 100; i++) {
+    const el = document.createElement('div');
+    el.className = 'raindrop';
+    el.style.cssText = `left:${Math.random()*100}%;height:${10+Math.random()*22}px;animation-duration:${0.4+Math.random()*0.5}s;animation-delay:${Math.random()*2}s;`;
+    rainWrap.appendChild(el);
+  }
+  const snowWrap = document.getElementById('snowWrap');
+  for (let i = 0; i < 50; i++) {
+    const el = document.createElement('div');
+    el.className = 'snowflake';
+    el.textContent = ['❄','❅','❆','*'][Math.floor(Math.random()*4)];
+    el.style.cssText = `left:${Math.random()*100}%;font-size:${7+Math.random()*13}px;animation-duration:${3+Math.random()*5}s;animation-delay:${Math.random()*6}s;`;
+    snowWrap.appendChild(el);
+  }
+  const starsWrap = document.getElementById('starsWrap');
+  for (let i = 0; i < 150; i++) {
+    const el = document.createElement('div');
+    el.className = 'star';
+    const sz = 1 + Math.random() * 2;
+    el.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*70}%;width:${sz}px;height:${sz}px;animation-duration:${1.5+Math.random()*2.5}s;animation-delay:${Math.random()*3}s;`;
+    starsWrap.appendChild(el);
+  }
 }
 
 // Helpers 

@@ -392,6 +392,29 @@
     margin-top: 6px;
   }
 
+  /************** Responsive Breackpoint for detail card ****************/
+   /* Tablet - slightly tighter  */
+   @media (max-width: 900px) {
+    .dc       { padding: 16px; }
+    .dc-val   { font-size: 28px; }
+    .dc-unit  { font-size: 15px; }
+  }
+
+  /* Mobile — compact 2-col layout */
+  @media (max-width: 480px) {
+    .dc       { padding: 14px; }
+    .dc-label { font-size: 10px; margin-bottom: 8px; }
+    .dc-val   { font-size: 24px; }
+    .dc-unit  { font-size: 13px; }
+    .dc-sub   { font-size: 11px; margin-top: 4px; }
+  }
+
+  /* Very small phones */
+  @media (max-width: 360px) {
+    .dc       { padding: 11px; }
+    .dc-val   { font-size: 20px; }
+  }
+
   /***************** UV bar  ****************/
   .uv-bar {
     @apply w-full relative mt-3;
@@ -484,5 +507,67 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  /************************** Responsive Breakpoint  **************************/
+  /* ── Tablet (≤ 900px) ── */
+  @media (max-width: 900px) {
+    .details-grid  { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .forecast-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+  }
+
+  /* ── iPad Mini (≤ 768px) ── */
+  @media (max-width: 768px) {
+    .details-grid  { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .forecast-grid { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
+
+    .glass-tile:hover { transform: none; }  /* disable hover lift on touch */
+  }
+
+  /* ── Mobile (≤ 480px) ── */
+  @media (max-width: 480px) {
+    /* Details grid — 2 columns, compact cards */
+    .details-grid  { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .forecast-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+
+    /* Detail card internals */
+    .glass-tile.detail-compact {
+      padding: 14px !important;
+    }
+    .glass-tile.detail-compact .detail-val  { font-size: 26px; }
+    .glass-tile.detail-compact .detail-unit { font-size: 14px; }
+
+    .app-header {
+      display: grid !important;
+      grid-template-columns: 1fr auto;
+      grid-template-areas:
+        "brand  unit"
+        "search search";
+      gap: 8px;
+      padding: 14px 0 18px;
+      align-items: center;
+    }
+    .header-brand { grid-area: brand; }
+    .header-unit  { grid-area: unit; justify-self: end; }
+    .header-search { grid-area: search; }
+
+    .search-section {
+      display: grid !important;
+      grid-template-columns: 1fr auto;
+      grid-template-areas:
+        "input input"
+        "sbtn  lbtn";
+      gap: 8px;
+      width: 100%;
+    }
+    .search-wrapper { grid-area: input; width: 100%; }
+    .btn-search { grid-area: sbtn; width: 100%; justify-content: center; padding: 11px 0; font-size: 14px; }
+    .btn-location { grid-area: lbtn; width: 48px; justify-content: center; padding: 11px 0; }
+  }
+
+  /* ── Very small phones (≤ 360px) ── */
+  @media (max-width: 360px) {
+    .details-grid  { grid-template-columns: 1fr 1fr; gap: 6px; }
+    .forecast-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
   }
 }

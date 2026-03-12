@@ -15,7 +15,7 @@ const searchBtn = document.getElementById('searchBtn');
 const locationBtn = document.getElementById('locationBtn');
 const clearSearchBtn = document.getElementById('clearSearch');
 const recentDropdown = document.getElementById('recentDropdown');
-const recentList     = document.getElementById('recentList');
+const recentList  = document.getElementById('recentList');
 const clearRecentBtn = document.getElementById('clearRecent');
 const loadingState = document.getElementById('loadingState');
 const errorState = document.getElementById('errorState');
@@ -234,16 +234,16 @@ function renderWeather(data) {
   const { current: c, forecast: f, geo } = data;
   const isDay = c.dt > c.sys.sunrise && c.dt < c.sys.sunset;
 
-  document.getElementById('heroFlag').textContent    = countryFlag(geo.country);
-  document.getElementById('heroCity').textContent    = geo.name;
+  document.getElementById('heroFlag').textContent = countryFlag(geo.country);
+  document.getElementById('heroCity').textContent = geo.name;
   document.getElementById('heroCountry').textContent = [geo.state, geo.country].filter(Boolean).join(', ');
-  document.getElementById('heroCond').textContent    = capitalize(c.weather[0].description);
+  document.getElementById('heroCond').textContent = capitalize(c.weather[0].description);
   document.getElementById('heroCondIcon').textContent = owmEmoji(c.weather[0].id, isDay);
   document.getElementById('heroUpdated').textContent  = `Updated ${formatTime(c.dt)}`;
 
   // Mini Stats
   document.getElementById('miniHumidity').textContent  = `${c.main.humidity}%`;
-  document.getElementById('miniWind').textContent       = `${Math.round(c.wind.speed * 3.6)} km/h`;
+  document.getElementById('miniWind').textContent = `${Math.round(c.wind.speed * 3.6)} km/h`;
   document.getElementById('miniVisibility').textContent = `${(c.visibility / 1000).toFixed(1)} km`;
 
   renderTemps(c, f)
@@ -267,7 +267,7 @@ function renderTemps(c, f) {
   const hiC = todaySlots.length ? Math.max(...todaySlots.map(s => s.main.temp_max)) : c.main.temp_max;
   const loC = todaySlots.length ? Math.min(...todaySlots.map(s => s.main.temp_min)) : c.main.temp_min;
 
-  const t  = unit === 'C' ? `${Math.round(tempC)}°`  : `${toF(tempC)}°`;
+  const t = unit === 'C' ? `${Math.round(tempC)}°`  : `${toF(tempC)}°`;
   const fl = unit === 'C' ? `${Math.round(feelsC)}°` : `${toF(feelsC)}°`;
   const hi = unit === 'C' ? Math.round(hiC) : toF(hiC);
   const lo = unit === 'C' ? Math.round(loC) : toF(loC);
@@ -285,11 +285,11 @@ function renderHourly(f, isDay) {
   container.style.gridTemplateColumns = `repeat(${slots.length}, 1fr)`;
 
   container.innerHTML = slots.map((s, i) => {
-    const date  = new Date(s.dt * 1000);
+    const date = new Date(s.dt * 1000);
     const label = i === 0 ? 'Now' : formatHour(date);
-    const temp  = unit === 'C' ? `${Math.round(s.main.temp)}°` : `${toF(s.main.temp)}°`;
+    const temp = unit === 'C' ? `${Math.round(s.main.temp)}°` : `${toF(s.main.temp)}°`;
     const slotDay = s.sys?.pod === 'd' || (date.getHours() >= 6 && date.getHours() < 20);
-    const rain  = s.pop > 0 ? `<div class="text-[11px] text-blue-200/80">💧${Math.round(s.pop * 100)}%</div>` : '';
+    const rain = s.pop > 0 ? `<div class="text-[11px] text-blue-200/80">💧${Math.round(s.pop * 100)}%</div>` : '';
     return `
       <div class="hour-item">
         <div class="text-xs text-white/65 font-medium whitespace-nowrap">${label}</div>
@@ -318,21 +318,21 @@ function renderForecast(f) {
 
   const allHiC = days.map(([, slots]) => Math.max(...slots.map(s => s.main.temp_max)));
   const allLoC = days.map(([, slots]) => Math.min(...slots.map(s => s.main.temp_min)));
-  const absHi  = Math.max(...allHiC);
-  const absLo  = Math.min(...allLoC);
-  const range  = absHi - absLo || 1;
+  const absHi = Math.max(...allHiC);
+  const absLo = Math.min(...allLoC);
+  const range = absHi - absLo || 1;
 
   const todayKey = new Date().toLocaleDateString('en-CA');
 
   document.getElementById('forecastGrid').innerHTML = days.map(([dateKey, slots], i) => {
-    const hiC  = Math.max(...slots.map(s => s.main.temp_max));
-    const loC  = Math.min(...slots.map(s => s.main.temp_min));
-    const hi   = unit === 'C' ? Math.round(hiC)  : toF(hiC);
-    const lo   = unit === 'C' ? Math.round(loC)  : toF(loC);
-    const rep  = slots.find(s => new Date(s.dt * 1000).getHours() === 12) || slots[0];
+    const hiC = Math.max(...slots.map(s => s.main.temp_max));
+    const loC = Math.min(...slots.map(s => s.main.temp_min));
+    const hi = unit === 'C' ? Math.round(hiC)  : toF(hiC);
+    const lo = unit === 'C' ? Math.round(loC)  : toF(loC);
+    const rep = slots.find(s => new Date(s.dt * 1000).getHours() === 12) || slots[0];
     const avgHumidity = Math.round(slots.reduce((a, s) => a + s.main.humidity, 0) / slots.length);
-    const maxWind     = Math.round(Math.max(...slots.map(s => s.wind.speed)) * 3.6);
-    const maxRain     = Math.round(Math.max(...slots.map(s => s.pop)) * 100);
+    const maxWind = Math.round(Math.max(...slots.map(s => s.wind.speed)) * 3.6);
+    const maxRain = Math.round(Math.max(...slots.map(s => s.pop)) * 100);
     const loOff = ((loC - absLo) / range * 100).toFixed(1);
     const hiOff = ((hiC - absLo) / range * 100).toFixed(1);
     const isToday  = dateKey === todayKey;
@@ -364,27 +364,27 @@ function renderForecast(f) {
 
 //--------------------- Details Cards ----------------------
 function renderDetails(c, isDay) {
-  const tempC  = c.main.temp;
+  const tempC = c.main.temp;
   const feelsC = c.main.feels_like;
-  const visKm  = (c.visibility / 1000).toFixed(1);
+  const visKm = (c.visibility / 1000).toFixed(1);
   const windKph = Math.round(c.wind.speed * 3.6);
   const gustKph = c.wind.gust ? Math.round(c.wind.gust * 3.6) : windKph;
-  const wDir   = windDirLabel(c.wind.deg);
-  const wDeg   = c.wind.deg || 0;
-  const fl     = unit === 'C' ? `${Math.round(feelsC)}°C` : `${toF(feelsC)}°F`;
+  const wDir = windDirLabel(c.wind.deg);
+  const wDeg = c.wind.deg || 0;
+  const fl = unit === 'C' ? `${Math.round(feelsC)}°C` : `${toF(feelsC)}°F`;
   const visDesc = visKm >= 10 ? 'Perfectly clear' : visKm >= 6 ? 'Good visibility' : 'Reduced visibility';
   const pressDesc = c.main.pressure > 1013 ? '↑ High pressure' : '↓ Low pressure';
   const feelsDesc = feelsC > tempC + 2 ? 'Feels hotter' : feelsC < tempC - 2 ? 'Feels cooler' : 'Similar to actual';
 
   const sunrise = formatTime(c.sys.sunrise);
-  const sunset  = formatTime(c.sys.sunset);
+  const sunset = formatTime(c.sys.sunset);
 
   const precip = (c.rain?.['1h'] ?? c.snow?.['1h'] ?? 0).toFixed(1);
 
   const clouds = c.clouds.all;
   const uvProxy = Math.round((1 - clouds / 100) * 8); // rough estimate
   const uvLabel = uvProxy <= 2 ? 'Low' : uvProxy <= 5 ? 'Moderate' : uvProxy <= 7 ? 'High' : 'Very High';
-  const uvPct   = Math.min(uvProxy / 11 * 100, 100).toFixed(1);
+  const uvPct = Math.min(uvProxy / 11 * 100, 100).toFixed(1);
 
   document.getElementById('detailsGrid').innerHTML = `
     <div class="glass-tile dc">
@@ -447,22 +447,22 @@ function renderDetails(c, isDay) {
 
 // ----------------------- Background System ---------------------
 const BG_THEMES = {
-  sunny:  ['#87ceeb','#5ab3e8','#2e88cc','#0d5294'],
-  clear:  ['#5ab3e8','#3a8fc8','#1e6aaa','#0d3e7a'],
+  sunny: ['#87ceeb','#5ab3e8','#2e88cc','#0d5294'],
+  clear: ['#5ab3e8','#3a8fc8','#1e6aaa','#0d3e7a'],
   cloudy: ['#6a86aa','#4a6688','#2c4a6e','#162a44'],
-  rainy:  ['#2e4e72','#1e3454','#122038','#080e1c'],
-  snowy:  ['#8abedd','#6298ba','#3e7298','#1e4a6e'],
+  rainy: ['#2e4e72','#1e3454','#122038','#080e1c'],
+  snowy: ['#8abedd','#6298ba','#3e7298','#1e4a6e'],
   stormy: ['#1c2838','#111c28','#0a1018','#040810'],
-  foggy:  ['#607080','#485a6a','#323e4c','#1e2830'],
-  night:  ['#0a1426','#061020','#040c18','#020810'],
+  foggy: ['#607080','#485a6a','#323e4c','#1e2830'],
+  night: ['#0a1426','#061020','#040c18','#020810'],
 };
 
 function setBackground(owmId, isDay) {
-  const bg        = document.getElementById('bgGradient');
-  const sun       = document.getElementById('sunOrb');
-  const clouds    = document.querySelectorAll('.cloud');
-  const rainWrap  = document.getElementById('rainWrap');
-  const snowWrap  = document.getElementById('snowWrap');
+  const bg = document.getElementById('bgGradient');
+  const sun = document.getElementById('sunOrb');
+  const clouds = document.querySelectorAll('.cloud');
+  const rainWrap = document.getElementById('rainWrap');
+  const snowWrap = document.getElementById('snowWrap');
   const starsWrap = document.getElementById('starsWrap');
   const lightning = document.getElementById('lightningWrap');
 
@@ -560,7 +560,7 @@ function owmEmoji(id, isDay) {
 // ---------------- Extreme Temperature Alert ------------------
 function checkAlert(tempC, cityName) {
   alertBanner.classList.add('hidden');
-  if      (tempC >= 45) showAlert(`🔥 Extreme heat in ${cityName}: ${Math.round(tempC)}°C — Stay indoors and stay hydrated!`);
+  if (tempC >= 45) showAlert(`🔥 Extreme heat in ${cityName}: ${Math.round(tempC)}°C — Stay indoors and stay hydrated!`);
   else if (tempC >= 40) showAlert(`⚠️ Heat alert in ${cityName}: ${Math.round(tempC)}°C — Use sun protection and drink plenty of water.`);
   else if (tempC <= -10) showAlert(`🥶 Severe cold in ${cityName}: ${Math.round(tempC)}°C — Dress warmly and limit time outdoors.`);
   else if (tempC <= 0)  showAlert(`🧊 Freezing in ${cityName}: ${Math.round(tempC)}°C — Watch for icy surfaces.`);
@@ -612,7 +612,7 @@ function removeRecent(name) {
   const li = recentList.querySelector(`[data-city="${CSS.escape(name)}"]`);
   if (li) {
     li.style.transition = 'opacity 0.15s, transform 0.15s';
-    li.style.opacity    = '0';
+    li.style.opacity = '0';
     li.style.transform  = 'translateX(8px)';
     setTimeout(() => li.remove(), 150);
   }
@@ -658,7 +658,7 @@ function showState(state) {
   weatherContent.classList.add('hidden');
   alertBanner.classList.add('hidden');
   if (state === 'loading') loadingState.classList.remove('hidden');
-  if (state === 'error')   errorState.classList.remove('hidden');
+  if (state === 'error') errorState.classList.remove('hidden');
   if (state === 'welcome') welcomeState.classList.remove('hidden');
   if (state === 'weather') weatherContent.classList.remove('hidden');
 }

@@ -189,6 +189,27 @@ The forecast data is processed using JavaScript to:
 The UI then updates dynamically with the new weather information.
 
 ---
+## 📷 Screenshots
+
+### Desktop View
+
+<p align="center">
+  <img src="screenshot/desktop.png" width="900">
+</p>
+
+### Mobile View
+
+<p align="center">
+  <img src="screenshot/mobile.png" width="350">
+</p>
+
+# 🌤️ SkyPulse Weather App
+
+SkyPulse is a modern and responsive weather application that allows users to search for any city and view real-time weather conditions.
+
+## 🌐 Live Demo
+
+https://skypulse3.netlify.app
 
 # 📈 Future Improvements
 
@@ -217,17 +238,3 @@ https://github.com/mohammad-umair32
 
 # 📄 License
 This project is open-source and available under the **MIT License**.
-
-## 📷 Screenshots
-
-### Desktop View
-
-<p align="center">
-  <img src="screenshot/desktop.png" width="900">
-</p>
-
-### Mobile View
-
-<p align="center">
-  <img src="screenshot/mobile.png" width="350">
-</p>

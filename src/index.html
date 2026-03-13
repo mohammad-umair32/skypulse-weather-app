@@ -125,45 +125,47 @@
     <!------------------ Weather container ----------------------->
     <div id="weatherContent" class="hidden animate-fadeUpFast">
 
-      <section class="flex justify-between items-start gap-6 pt-5 pb-10 flex-wrap">
+      <section class="pt-5 pb-10">
+        <div class="hero-layout">
+    
+    <!----------------- Left section (Temperature) --------->
+          <div class="hero-left">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="text-4xl" id="heroFlag"></span>
+              <div>
+                <h1 id="heroCity" class="text-[40px] font-light tracking-tight leading-none">—</h1>
+                <p id="heroCountry" class="text-sm text-white/65 mt-0.5">—</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-5 flex-wrap">
+              <div id="heroTemp" class="text-[100px] font-thin leading-none tracking-[-5px] transition-all duration-300">—°</div>
+                <div class="pt-3">
+                  <p id="heroCond" class="text-[22px] font-normal mb-1.5">—</p>
+                  <p id="heroHiLo" class="text-base text-white/65 font-light mb-1">H:—° · L:—°</p>
+                  <p id="heroFeels"  class="text-sm text-white/40">Feels like —°</p>
+                </div>
+              </div>
+              <p id="heroUpdated" class="text-xs text-white/40 mt-3">—</p>
+            </div>
 
-        <!----------------- Left section --------->
-        <div class="flex-1 min-w-[200px]">
-          <div class="flex items-center gap-3 mb-4">
-            <span class="text-4xl" id="heroFlag"></span>
-            <div>
-              <h1 id="heroCity" class="text-[40px] font-light tracking-tight leading-none">—</h1>
-              <p  id="heroCountry" class="text-sm text-white/65 mt-0.5">—</p>
+    <!-------------- Right section (Icon + Cards) ------------->
+            <div class="hero-right mt-2.5">
+              <div id="heroCondIcon" class="text-[88px] leading-none mb-5">—</div>
+                <div class="flex gap-3 justify-end flex-wrap hero-cards">
+                  <div class="mini-stat glass-tile flex flex-col items-center gap-1 text-sm font-medium px-4 py-3 rounded-2xl">
+                    <span class="text-lg">💧</span>
+                    <span id="miniHumidity">—%</span>
+                  </div>
+                <div class="mini-stat glass-tile flex flex-col items-center gap-1 text-sm font-medium px-4 py-3 rounded-2xl">
+                  <span class="text-lg">💨</span>
+                  <span id="miniWind">— km/h</span>
+                </div>
+                <div class="mini-stat glass-tile flex flex-col items-center gap-1 text-sm font-medium px-4 py-3 rounded-2xl">
+                  <span class="text-lg">👁️</span>
+                  <span id="miniVisibility">— km</span>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="flex items-start gap-5 flex-wrap">
-            <div id="heroTemp" class="text-[100px] font-thin leading-none tracking-[-5px] transition-all duration-300">—°</div>
-            <div class="pt-3">
-              <p id="heroCond" class="text-[22px] font-normal mb-1.5">—</p>
-              <p id="heroHiLo" class="text-base text-white/65 font-light mb-1">H:—° · L:—°</p>
-              <p id="heroFeels"  class="text-sm text-white/40">Feels like —°</p>
-            </div>
-          </div>
-          <p id="heroUpdated" class="text-xs text-white/40 mt-3">—</p>
-        </div>
-
-        <!-------------- Right section------------->
-        <div class="flex flex-col items-center gap-5">
-          <div id="heroCondIcon" class="text-[88px] leading-none">—</div>
-          <div class="flex gap-5">
-            <div class="mini-stat glass-tile flex flex-col items-center gap-1 text-sm font-medium px-4 py-3 rounded-2xl">
-              <span class="text-lg">💧</span>
-              <span id="miniHumidity">—%</span>
-            </div>
-            <div class="mini-stat glass-tile flex flex-col items-center gap-1 text-sm font-medium px-4 py-3 rounded-2xl">
-              <span class="text-lg">💨</span>
-              <span id="miniWind">— km/h</span>
-            </div>
-            <div class="mini-stat glass-tile flex flex-col items-center gap-1 text-sm font-medium px-4 py-3 rounded-2xl">
-              <span class="text-lg">👁️</span>
-              <span id="miniVisibility">— km</span>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -196,8 +198,7 @@
       </section>
 
      </div>
-    </div>
-
-    <script src="script.js"></script>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>

@@ -509,7 +509,34 @@
     background-clip: text;
   }
 
+  /* Hero Layout */
+  .hero-layout {
+    @apply flex justify-between items-start gap-6 flex-wrap;
+  }
+
+  .hero-left {
+    @apply flex-1 min-w-[200px];
+  }
+
+  .hero-right {
+    @apply flex flex-col items-end;
+  }
+
   /************************** Responsive Breakpoint  **************************/
+
+  @media (min-width: 481px) {
+    .hero-right {
+    padding-top: 0;
+    }
+  
+    #heroCondIcon {
+      margin-top: -10px; /* Aligns with temperature baseline */
+    }
+  
+    .hero-cards {
+      max-width: 100%;
+    }
+  }
   /* ── Tablet (≤ 900px) ── */
   @media (max-width: 900px) {
     .details-grid  { grid-template-columns: repeat(2, 1fr); gap: 10px; }
@@ -524,46 +551,87 @@
     .glass-tile:hover { transform: none; }  /* disable hover lift on touch */
   }
 
-  /* ── Mobile (≤ 480px) ── */
-  @media (max-width: 480px) {
-    /* Details grid — 2 columns, compact cards */
-    .details-grid  { grid-template-columns: 1fr 1fr; gap: 8px; }
-    .forecast-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
-
-    /* Detail card internals */
-    .glass-tile.detail-compact {
-      padding: 14px !important;
-    }
-    .glass-tile.detail-compact .detail-val  { font-size: 26px; }
-    .glass-tile.detail-compact .detail-unit { font-size: 14px; }
-
-    .app-header {
-      display: grid !important;
-      grid-template-columns: 1fr auto;
-      grid-template-areas:
-        "brand  unit"
-        "search search";
-      gap: 8px;
-      padding: 14px 0 18px;
-      align-items: center;
-    }
-    .header-brand { grid-area: brand; }
-    .header-unit  { grid-area: unit; justify-self: end; }
-    .header-search { grid-area: search; }
-
-    .search-section {
-      display: grid !important;
-      grid-template-columns: 1fr auto;
-      grid-template-areas:
-        "input input"
-        "sbtn  lbtn";
-      gap: 8px;
-      width: 100%;
-    }
-    .search-wrapper { grid-area: input; width: 100%; }
-    .btn-search { grid-area: sbtn; width: 100%; justify-content: center; padding: 11px 0; font-size: 14px; }
-    .btn-location { grid-area: lbtn; width: 48px; justify-content: center; padding: 11px 0; }
+  
+/* ── Mobile (≤ 480px) ── */
+@media (max-width: 480px) {
+  .hero-layout {
+    display: grid !important;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "temp icon"
+      "cards cards";
+    gap: 16px 12px;
+    align-items: start;
   }
+  
+  .hero-left {
+    grid-area: temp;
+    min-width: 0;
+  }
+  
+  .hero-right {
+    display: contents;
+  }
+  
+  #heroCondIcon {
+    grid-area: icon;
+    font-size: 64px !important;
+    margin-top: 100px;
+    line-height: 1;
+    justify-self: end;
+    align-self: start;
+  }
+  
+  .hero-cards {
+    grid-area: cards;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    width: 100%;
+  }
+  
+  .mini-stat {
+    min-width: 0;
+  }
+
+  /* Details grid — 2 columns, compact cards */
+  .details-grid  { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .forecast-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+
+  /* Detail card internals */
+  .glass-tile.detail-compact {
+    padding: 14px !important;
+  }
+  .glass-tile.detail-compact .detail-val  { font-size: 26px; }
+  .glass-tile.detail-compact .detail-unit { font-size: 14px; }
+
+  .app-header {
+    display: grid !important;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "brand  unit"
+      "search search";
+    gap: 8px;
+    padding: 14px 0 18px;
+    align-items: center;
+  }
+  .header-brand { grid-area: brand; }
+  .header-unit  { grid-area: unit; justify-self: end; }
+  .header-search { grid-area: search; }
+
+  .search-section {
+    display: grid !important;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "input input"
+      "sbtn  lbtn";
+    gap: 8px;
+    width: 100%;
+  }
+  .search-wrapper { grid-area: input; width: 100%; }
+  .btn-search { grid-area: sbtn; width: 100%; justify-content: center; padding: 11px 0; font-size: 14px; }
+  .btn-location { grid-area: lbtn; width: 48px; justify-content: center; padding: 11px 0; }
+}
 
   /* ── Very small phones (≤ 360px) ── */
   @media (max-width: 360px) {
